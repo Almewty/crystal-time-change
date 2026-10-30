@@ -1,0 +1,35 @@
+name: Test and package
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install LuaJIT
+        run: sudo apt-get update && sudo apt-get install -y luajit
+      - name: Check out the tested Gen1Recomp version
+        run: |
+          git clone --depth 1 --branch v0.3.98 https://github.com/bryanthaboi/gen1recomp.git "$RUNNER_TEMP/gen1recomp"
+          test "$(git -C "$RUNNER_TEMP/gen1recomp" rev-parse HEAD)" = "4312fb64c927b8892091075f159f09d7a211d4b5"
+      - name: Run engine integration tests
+        run: |
+          cd "$RUNNER_TEMP/gen1recomp"
+          luajit "$GITHUB_WORKSPACE/tests/run.lua" "$GITHUB_WORKSPACE"
+      - name: Verify and build the ZIP
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 tools/package.py
+      - name: Upload installable mod
+        uses: actions/upload-artifact@v4
+        with:
+          name: crystal-time-change
+          path: dist/*.zip
+          if-no-files-found: error
