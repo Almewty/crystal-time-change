@@ -36,7 +36,14 @@ clock-reset password is needed.
 - Edits a copy of the main menu's loaded save, not a possibly stale `game.save`.
   Only after a successful write is that candidate handed to CONTINUE.
 - `SAVE FAILED` means the writer failed; the editor stays open for retry or B.
+  A failure before staging preserves the old disk clock. If the engine fails
+  **after staging but while replacing the primary file**, a restart may recover
+  the **new** clock from `.tmp` even though the editor reported failure. Retry
+  SAVE CLOCK to finish the write; the native `.bak` retains the previous save.
+  The mod does not replace or bypass this engine recovery mechanism.
   Normal engine save normalization and `savedAt` metadata also run on a write.
+- Weekday-change notifications to other mods are deferred until a successful
+  write, so a failed attempt does not announce a change that was not committed.
 - Time-sensitive encounters and daily events can be affected by clock/weekday changes.
   This is not a daily-event-reset mod and does not clear event flags or cooldowns.
 - The clock remains based on the device clock plus the chosen offset. Changing the
@@ -66,7 +73,7 @@ its real main menu and editor, drive input, exercise drawing calls, and round-tr
 saves through the real save implementation with the upstream in-memory filesystem.
 Headless drawing uses an ASCII test charmap, not extracted Pokémon art. No physical
 Android device, ROM-backed full playthrough, or pixel-perfect rendering is covered.
-The intentional disk-full test produces one expected engine error log.
+The intentional write-failure tests produce expected engine error logs.
 
 Build the installable ZIP (runtime files only):
 

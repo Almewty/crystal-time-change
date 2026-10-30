@@ -220,4 +220,37 @@ test("weekday events occur only after a successful persisted write", function()
   assert(#notifications == 1 and notifications[1].day == editor.day, "Successful write did not emit exactly once")
   unsubscribe()
 end)
+test("a failed primary write remains recoverable through the engine's staged file", function()
+  local game, menu, save, press = fixture(true)
+  assert(Save.save(save))
+  menu:choose(assert(find(menu, "CHANGE TIME")).value)
+  local editor = game.stack:top()
+  editor.hour, editor.minute, editor.day, editor.index = 21, 42, 3, 4
+  local main, backup, staged = Save.filenames("crystal")
+  local write = love.filesystem.write
+  love.filesystem.write = function(path, bytes)
+    if path == main then return false, "test primary write failure" end
+    return write(path, bytes)
+  end
+  press("a")
+  love.filesystem.write = write
+  assert(editor.error and menu.save == save and game.stack:top() == editor)
+  assert(love.filesystem.getInfo(backup) and love.filesystem.getInfo(staged))
+  local recovered, source = Save.load("crystal")
+  assert(source == "tmp", "Engine did not retain staged recovery")
+  assert(Clock.hour(recovered) == 21 and Clock.minute(recovered) == 42,
+    "Staged recovery must contain the requested new time")
+  press("a") -- retry completes the primary write
+  assert(game.stack:top() == menu)
+  local _, recovery = Save.load("crystal")
+  assert(recovery == nil, "Successful retry still needs recovery")
+end)
+test("touch-style D-pad and A input selects the injected main-menu action", function()
+  local game, menu, _, press = fixture(true)
+  press("down"); press("down"); press("a")
+  assert(game.stack:top() ~= menu, "D-pad selection did not open the editor")
+  press("b")
+  for _ = 1, #menu.list.items do press("down") end
+  assert(menu.list.scroll == 0, "Full menu still scrolls after wrapping")
+end)
 print(string.format("%d tests passed", count))
