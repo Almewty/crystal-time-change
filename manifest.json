@@ -1,0 +1,18 @@
+{
+  "id": "crystal_time_change",
+  "name": "Crystal Time Change",
+  "version": "1.0.0",
+  "api": 2,
+  "entry": "main.lua",
+  "profile": "content",
+  "category": "UI",
+  "games": ["crystal"],
+  "game_version": ">=0.3.98 <0.3.99",
+  "priority": 100,
+  "permissions": ["engine_internals"],
+  "dependencies": [],
+  "optional_dependencies": [],
+  "conflicts": [],
+  "github": "Almewty/crystal-time-change",
+  "description": "Adds CHANGE TIME to Crystal's main menu. Set the hour, minute, and weekday without changing your device clock."
+}

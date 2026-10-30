@@ -1,0 +1,19 @@
+return {
+  summary = "Change Crystal's hour, minute, and weekday from the main menu.",
+  author = "Almewty",
+  contact = "https://github.com/Almewty/crystal-time-change",
+  tags = { "crystal", "clock", "ui", "quality-of-life" },
+  differences = {
+    changed = { "Gen2MainMenu factory wraps the original Crystal main menu" },
+    added = { "CHANGE TIME entry and clock editor for existing saves" },
+    known = {
+      "Gen1Recomp 0.3.98 and Crystal only",
+      "May conflict with other mods replacing Gen2MainMenu",
+      "Clock changes do not clear daily event flags or cooldowns",
+    },
+  },
+  credits = {
+    { who = "bryanthaboi/gen1recomp", for_ = "the mod API and native clock/save services" },
+  },
+  compat = { engine = ">=0.3.98 <0.3.99", modApi = 2 },
+}
