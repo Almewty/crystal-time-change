@@ -82,7 +82,20 @@ Build the installable ZIP (runtime files only):
 python3 tools/package.py
 ```
 
-The archive is written to `dist/`. Tests and build tools are not shipped in it.
+The archive and its `.zip.sha256` checksum are written to `dist/`. Release ZIPs
+have the mod files at the archive root. Tests and build tools are not shipped.
+
+## Releases
+
+[GitHub Releases](https://github.com/Almewty/crystal-time-change/releases) are
+published automatically by semantic-release after verification succeeds on `main`.
+Conventional Commits determine patch/minor/major versions and generate the notes.
+The computed version is stamped into the **archived** manifest; no manual version
+bump or release is needed. See [CONTRIBUTING.md](CONTRIBUTING.md) for development
+rules, release behavior, and checks.
+
+Device testing: the maintainer reported the mod working as expected on Android with
+Gen1Recomp 0.3.98. Automated tests remain headless and do not replace device QA.
 
 ## License
 

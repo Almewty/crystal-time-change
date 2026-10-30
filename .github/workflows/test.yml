@@ -2,8 +2,10 @@ name: Test and package
 
 on:
   push:
+    branches-ignore: [main]
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -13,6 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install locked release tooling and test commit analysis
+        run: |
+          npm ci --ignore-scripts
+          npm test
       - name: Install LuaJIT
         run: sudo apt-get update && sudo apt-get install -y luajit
       - name: Check out the tested Gen1Recomp version
