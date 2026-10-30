@@ -92,6 +92,9 @@ return function(mod)
           if item.value == "option" then index = i break end
         end
         table.insert(menu.list.items, index, { label = "CHANGE TIME", value = ACTION })
+        -- Chrome.List snapshots its visible row count at construction time.
+        menu.list.rows = #menu.list.items
+        menu.list:ensureVisible()
         local choose = menu.choose
         menu.choose = function(self, value)
           if value == ACTION then
