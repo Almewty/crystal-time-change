@@ -1,0 +1,22 @@
+{
+  "branches": ["main"],
+  "repositoryUrl": "https://github.com/Almewty/crystal-time-change.git",
+  "tagFormat": "v${version}",
+  "plugins": [
+    ["@semantic-release/commit-analyzer", { "preset": "conventionalcommits" }],
+    ["@semantic-release/release-notes-generator", { "preset": "conventionalcommits" }],
+    ["@semantic-release/exec", {
+      "prepareCmd": "python3 tools/package.py --version ${nextRelease.version}"
+    }],
+    ["@semantic-release/github", {
+      "assets": [
+        { "path": "dist/crystal_time_change-*.zip", "label": "Installable Crystal Time Change mod" },
+        { "path": "dist/crystal_time_change-*.zip.sha256", "label": "SHA-256 checksum" }
+      ],
+      "successComment": false,
+      "failComment": false,
+      "failTitle": false,
+      "releasedLabels": false
+    }]
+  ]
+}
