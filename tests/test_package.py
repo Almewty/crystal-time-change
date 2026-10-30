@@ -17,14 +17,14 @@ class PackageTest(unittest.TestCase):
         spec.loader.exec_module(module)
         with tempfile.TemporaryDirectory() as directory:
             archive = module.build(ROOT, Path(directory))
-            self.assertEqual(archive.name, "crystal-time-change-1.0.0.zip")
+            self.assertEqual(archive.name, "crystal_time_change-1.0.0.zip")
             with zipfile.ZipFile(archive) as zipped:
                 self.assertIsNone(zipped.testzip())
                 expected = {"manifest.json", "main.lua", "mod.card", "README.md", "LICENSE"}
-                self.assertEqual(set(zipped.namelist()), {f"crystal_time_change/{p}" for p in expected})
+                self.assertEqual(set(zipped.namelist()), expected)
                 for name in expected:
-                    self.assertEqual(zipped.read(f"crystal_time_change/{name}"), (ROOT / name).read_bytes())
-                manifest = json.loads(zipped.read("crystal_time_change/manifest.json"))
+                    self.assertEqual(zipped.read(name), (ROOT / name).read_bytes())
+                manifest = json.loads(zipped.read("manifest.json"))
                 self.assertEqual(manifest["games"], ["crystal"])
                 self.assertEqual(manifest["permissions"], ["engine_internals"])
 

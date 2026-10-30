@@ -7,8 +7,9 @@ Set the in-game hour, minute, and weekday without changing Android's clock.
 ## Install on Android
 
 1. Back up your save first (the launcher's duplicate-save-slot feature is suitable).
-2. Download `crystal-time-change-1.0.0.zip` supplied with the mod. Alternatively,
-   GitHub's **Code → Download ZIP** also contains a single mod root and manifest.
+2. Download the installable `crystal_time_change-<version>.zip` asset from
+   [GitHub Releases](https://github.com/Almewty/crystal-time-change/releases).
+   GitHub's **Code → Download ZIP** is a source archive, not the release artifact.
 3. In Gen1Recomp's launcher, open **MODS → Import mod .zip** and pick the ZIP.
    Do not unpack it first.
 4. Enable **Crystal Time Change** for Crystal and launch the game again.
