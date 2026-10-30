@@ -201,4 +201,23 @@ test("original menu module stays unchanged and vanilla actions survive", functio
   local vanilla = MainMenu.new(game, { hasSave = true, save = menu.save })
   assert(not find(vanilla, "CHANGE TIME"), "Shared module was patched")
 end)
+test("weekday events occur only after a successful persisted write", function()
+  local game, menu, _, press = fixture(true)
+  local notifications = {}
+  local unsubscribe = require("src.mods.Runtime").events:on("clock.day_changed", function(event)
+    notifications[#notifications + 1] = event
+  end)
+  local originalDay = Clock.weekday(menu.save) -- establish the event latch
+  menu:choose(assert(find(menu, "CHANGE TIME")).value)
+  local editor = game.stack:top()
+  editor.day, editor.index = (originalDay + 1) % 7, 4
+  local write = love.filesystem.write
+  love.filesystem.write = function() return false, "test write failure" end
+  press("a")
+  love.filesystem.write = write
+  assert(#notifications == 0, "Failed write emitted a weekday change")
+  press("a")
+  assert(#notifications == 1 and notifications[1].day == editor.day, "Successful write did not emit exactly once")
+  unsubscribe()
+end)
 print(string.format("%d tests passed", count))

@@ -43,11 +43,15 @@ function Editor:saveClock()
   local completed, saved, candidate = pcall(function()
     local copy = Serializer.decode(Serializer.encode(self.menu.save))
     Clock.setTime(copy, self.hour, self.minute)
-    Clock.setWeekday(copy, self.day)
+    -- Stage InitDayOfWeek's offsets without its process-global event. The
+    -- native setter emits only after this candidate has actually been saved.
+    copy.rtc.startDay = (self.day - Clock.hostWeekday()) % Clock.DAYS
+    copy.rtc.dayOfWeek = self.day
     return Save.save(copy), copy
   end)
   if completed and saved then
     self.menu.save = candidate
+    Clock.setWeekday(candidate, self.day)
     self.game.stack:pop()
   else
     self.error = true
